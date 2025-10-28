@@ -1,3 +1,13 @@
 ﻿using System.Net.Http.Headers;
+using StockTrendPredictor.Models;
+using StockTrendPredictor.Services;
 
+Console.WriteLine("=== Stock Trend Predictor ===");
+Console.Write("Ange en aktiekod (ex: AAPL, MSFT, TSLA): ");
+string? symbol = Console.ReadLine()?.ToUpper();
 
+if (string.IsNullOrEmpty(symbol))
+{
+    Console.WriteLine("Ingen symbol angiven. Avslutar.");
+    return;
+}
