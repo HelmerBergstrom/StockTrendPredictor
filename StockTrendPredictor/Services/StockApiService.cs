@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Http.Json;
+using System.Reflection.Metadata.Ecma335;
 using System.Text.Json;
 using Microsoft.ML.Transforms;
 using StockTrendPredictor.Models;
@@ -31,7 +33,7 @@ namespace StockTrendPredictor.Services
             }
 
             // Konverterar dictionary till StockData-lista.
-            // ATT GÖRA: Sortera denna
+            // "kvp" står för KeyValuePair i denna metod.
             var list = apiResponse.TimeSeriesDaily
                 .Select(kvp =>
                 {
@@ -39,11 +41,22 @@ namespace StockTrendPredictor.Services
                     var d = kvp.Value;
                     return new StockData
                     {
-
+                        // float och long likt StockData-class. 
+                        // Frågetecken då det kan vara null.
+                        Date = Date,
+                        Open = float.Parse(d.Open ?? "0"),
+                        High = float.Parse(d.High ?? "0"),
+                        Low = float.Parse(d.Low ?? "0"),
+                        Close = float.Parse(d.Close ?? "0"),
+                        Volume = long.Parse(d.Volume ?? "0"),
                     };
-                });
+                })
+                .OrderBy(d => d.Date) // sorterar utifrån datum, stigande bör det vara.
+                .ToList(); // list = List<StockData>
 
+            return list;
         }
+        
     }
 
 }
