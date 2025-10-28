@@ -2,6 +2,28 @@ using System.Reflection.Metadata.Ecma335;
 using System.Text.Json.Serialization;
 using Microsoft.VisualBasic;
 
+//<summary>
+// Data från API:et ser ut som följande:
+
+// {
+//     "Meta Data": {
+//         "1. Information": "Daily Prices (open, high, low, close) and Volumes",
+//         "2. Symbol": "NVDA",
+//         "3. Last Refreshed": "2025-10-24",
+//         "4. Output Size": "Compact",
+//         "5. Time Zone": "US/Eastern"
+//     },
+//     "Time Series (Daily)": {
+//         "2025-10-24": {
+//             "1. open": "183.8350",
+//             "2. high": "187.4700",
+//             "3. low": "183.5000",
+//             "4. close": "186.2600",
+//             "5. volume": "131296677"
+//         },
+// </summary>
+
+
 namespace StockTrendPredictor.Models
 {
     public class StockApiResponse
