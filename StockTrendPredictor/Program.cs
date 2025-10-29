@@ -3,7 +3,7 @@ using StockTrendPredictor.Models;
 using StockTrendPredictor.Services;
 
 Console.WriteLine("=== Stock Trend Predictor ===");
-Console.Write("Ange en aktiekod (ex: AAPL, MSFT, TSLA): ");
+Console.Write("Ange en aktiekod (ex: AAPL, MSFT, NVDA): ");
 string? symbol = Console.ReadLine()?.ToUpper();
 
 if (string.IsNullOrEmpty(symbol))
