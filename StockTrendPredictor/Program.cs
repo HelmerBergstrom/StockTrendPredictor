@@ -5,7 +5,7 @@ using StockTrendPredictor.Services;
 
 Console.WriteLine("=== Stock Trend Predictor ===");
 Console.Write("Ange en aktiekod (ex: AAPL, MSFT, NVDA): ");
-string? symbol = Console.ReadLine()?.ToUpper();
+string? symbol = Console.ReadLine()?.Trim().ToUpper();
 
 if (string.IsNullOrEmpty(symbol))
 {
@@ -19,5 +19,6 @@ var stockData = await service.GetStockDataAsync(symbol);
 Console.WriteLine($"\nData för {symbol}:");
 Console.WriteLine("------------------------------------");
 
+Console.WriteLine("\nTränar modeller (detta kan ta upp till en minut)...");
 var mlService = new MLService();
 mlService.TrainAndEvaluate(stockData);

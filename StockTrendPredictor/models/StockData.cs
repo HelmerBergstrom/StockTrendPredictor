@@ -1,3 +1,5 @@
+using Microsoft.ML.Data;
+
 namespace StockTrendPredictor.Models
 {
     // Data från API:et
@@ -9,17 +11,26 @@ namespace StockTrendPredictor.Models
         public float Low { get; set; }
         public float Close { get; set; }
         public float Volume { get; set; }
+
+        // Förutsäga upp- eller nedgång
+        // 1 om morgondagens stängning är högre än dagens, annars 0.
+        public bool WillRise { get; set; }
     }
 
-    // Data som skickas till ML.Net
-    public class StockInput
-    {
-
-    }
-
-    // Data som ges ut efter ML tränats.
+    // För regression. Förutsägning av nästa dags stängningspris ("Close").
     public class StockPrediction
     {
+        [ColumnName("Score")]
+        public float PredictedClose { get; set; }
+    }
 
+    // Klassifiering, Upp/Ned-förutsägelse.
+    public class StockDirectionPrediction
+    {
+        [ColumnName("PredictedLabel")]
+        public bool PredictedLabel { get; set; }
+
+        public float Probability { get; set; }
+        public float Score { get; set; }
     }
 }
