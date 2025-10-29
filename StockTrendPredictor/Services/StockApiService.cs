@@ -41,14 +41,14 @@ namespace StockTrendPredictor.Services
                     var d = kvp.Value;
                     return new StockData
                     {
-                        // float och long likt StockData-class. 
+                        // float likt StockData-class. 
                         // Frågetecken då det kan vara null.
                         Date = Date,
                         Open = float.Parse(d.Open ?? "0"),
                         High = float.Parse(d.High ?? "0"),
                         Low = float.Parse(d.Low ?? "0"),
                         Close = float.Parse(d.Close ?? "0"),
-                        Volume = long.Parse(d.Volume ?? "0"),
+                        Volume = float.Parse(d.Volume ?? "0"),
                     };
                 })
                 .OrderBy(d => d.Date) // sorterar utifrån datum, stigande bör det vara.

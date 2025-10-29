@@ -8,7 +8,7 @@ namespace StockTrendPredictor.Models
         public float High { get; set; }
         public float Low { get; set; }
         public float Close { get; set; }
-        public long Volume { get; set; }
+        public float Volume { get; set; }
     }
 
     // Data som skickas till ML.Net
