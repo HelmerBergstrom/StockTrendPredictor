@@ -20,6 +20,13 @@ namespace StockTrendPredictor.Services
             // GET-begäran till API:et. Await för att invänta detta innan vi går vidare.
             var json = await client.GetStringAsync(url);
 
+            // Om gränsen för API-förfrågningar på en dag är nådd, stannar det här.
+            if (json.Contains("Please subscribe") || json.Contains("API rate limit is 25 requests per day"))
+            {
+                Console.WriteLine("Gränsen är nådd för API-förfrågningar idag. Försök igen imorgon.");
+                return new List<StockData>();
+            }
+
             // Serialiserar data från API:et, för att göra om data till C#-objekt ist för JSON.
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             StockApiResponse? apiResponse = JsonSerializer.Deserialize<StockApiResponse>(json, options);

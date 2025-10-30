@@ -105,7 +105,17 @@ namespace StockTrendPredictor.Services
             Console.WriteLine("\n Modeller sparade:");
             Console.WriteLine(" - bestRegressionModel.zip (Nästa dags stängning)");
             Console.WriteLine(" - bestBinaryModel.zip (Uppgång/Nedgång)");
+        }
 
-        }   
+        // Ladda redan befintliga modeller för förutsägningar.
+        public ITransformer LoadRegressionModel(string path = "bestRegressionModel.zip")
+        {
+            return _mlContext.Model.Load(path, out var schema);
+        }
+
+        public ITransformer LoadBinaryModel(string path = "bestBinaryModel.zip")
+        {
+            return _mlContext.Model.Load(path, out var schema);
+        }
     }
 }
