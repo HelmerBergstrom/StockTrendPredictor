@@ -30,6 +30,7 @@ namespace StockTrendPredictor.Services
                     Low = stockData[i].Low,
                     Volume = stockData[i].Volume,
                     Close = stockData[i + 1].Close,
+                    DailyRange = stockData[i].High - stockData[i].Low,
                     WillRise = stockData[i + 1].Close > stockData[i].Close
                 });
             }
@@ -70,7 +71,7 @@ namespace StockTrendPredictor.Services
 
                 // Kombinerar alla numeriska kolumner till en "Features"-kolumn.
                 var featurePipeline = _mlContext.Transforms.Concatenate("Features",
-                    new[] { "Open", "High", "Low", "Volume" })
+                    new[] { "Open", "High", "Low", "Volume", "DailyRange" })
                     .Append(_mlContext.Transforms.NormalizeMinMax("Features"));
 
                 // Skapa tränaren
@@ -83,7 +84,6 @@ namespace StockTrendPredictor.Services
                 // Träna modellen
                 var binaryModel = trainingPipeline.Fit(split.TrainSet);
 
-                
                 var binaryPredictions = binaryModel.Transform(split.TestSet);
 
                 var binaryMetrics = _mlContext.BinaryClassification.Evaluate(binaryPredictions, labelColumnName: "WillRise");
@@ -102,9 +102,9 @@ namespace StockTrendPredictor.Services
                 _mlContext.Model.Save(binaryModel, split.TrainSet.Schema, "bestBinaryModel.zip");
             }
 
-            // Console.WriteLine("\n Modeller sparade:");
-            // Console.WriteLine(" - bestRegressionModel.zip (Nästa dags stängning)");
-            // Console.WriteLine(" - bestBinaryModel.zip (Uppgång/Nedgång)");
+            Console.WriteLine("\n Modeller sparade:");
+            Console.WriteLine(" - bestRegressionModel.zip (Nästa dags stängning)");
+            Console.WriteLine(" - bestBinaryModel.zip (Uppgång/Nedgång)");
 
         }   
     }

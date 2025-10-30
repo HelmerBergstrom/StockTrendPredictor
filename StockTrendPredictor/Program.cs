@@ -13,12 +13,14 @@ if (string.IsNullOrEmpty(symbol))
     return;
 }
 
-var service = new StockApiService();
-var stockData = await service.GetStockDataAsync(symbol);
+// var service = new StockApiService();
+// var stockData = await service.GetStockDataAsync(symbol);
 
 Console.WriteLine($"\nData för {symbol}:");
 Console.WriteLine("------------------------------------");
 
-Console.WriteLine("\nTränar modeller (detta kan ta upp till en minut)...");
-var mlService = new MLService();
-mlService.TrainAndEvaluate(stockData);
+// Console.WriteLine("\nTränar modeller (detta kan ta upp till en minut)...");
+// var mlService = new MLService();
+
+// kod för att köra träning av modeller.
+// mlService.TrainAndEvaluate(stockData); 

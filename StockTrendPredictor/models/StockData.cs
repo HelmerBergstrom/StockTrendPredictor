@@ -16,7 +16,6 @@ namespace StockTrendPredictor.Models
         // 1 om morgondagens stängning är högre än dagens, annars 0.
         public bool WillRise { get; set; }
         public float DailyRange { get; set; }
-        public float MovingAverage { get; set; }
     }
 
     // För regression. Förutsägning av nästa dags stängningspris ("Close").
