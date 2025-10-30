@@ -16,7 +16,7 @@ namespace StockTrendPredictor.Services
         public async Task<List<StockData>> GetStockDataAsync(string Symbol)
         {
             // deklarerar variabel med URL:en.
-            var url = $"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={Symbol}&apikey={_apiKey}";
+            var url = $"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={Symbol}&outputsize=full&apikey={_apiKey}";
             // GET-begäran till API:et. Await för att invänta detta innan vi går vidare.
             var json = await client.GetStringAsync(url);
 

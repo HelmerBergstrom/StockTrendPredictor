@@ -1,6 +1,7 @@
 using System.Reflection.Emit;
 using Microsoft.ML;
 using Microsoft.ML.AutoML;
+using Microsoft.ML.Data;
 using StockTrendPredictor.Models;
 
 namespace StockTrendPredictor.Services
@@ -36,7 +37,6 @@ namespace StockTrendPredictor.Services
             IDataView data = _mlContext.Data.LoadFromEnumerable(shiftedData);
             var split = _mlContext.Data.TrainTestSplit(data, testFraction: 0.2);
 
-
             Console.WriteLine($"Antal dagar: {shiftedData.Count}");
             Console.WriteLine($"Uppgångar (WillRise = true): {shiftedData.Count(d => d.WillRise)}");
             Console.WriteLine($"Nedgångar (WillRise = false): {shiftedData.Count(d => !d.WillRise)}");
@@ -44,7 +44,7 @@ namespace StockTrendPredictor.Services
 
             // TRÄNING AV REGRESSION, alltså nästa dags Close.
             Console.WriteLine("Kör AutoML för regression...");
-            var regressionSettings = new RegressionExperimentSettings { MaxExperimentTimeInSeconds = 60 };
+            var regressionSettings = new RegressionExperimentSettings { MaxExperimentTimeInSeconds = 30 };
             var regressionExperiment = _mlContext.Auto().CreateRegressionExperiment(regressionSettings);
             var regressionResult = regressionExperiment.Execute(split.TrainSet, labelColumnName: "Close");
 
@@ -60,25 +60,51 @@ namespace StockTrendPredictor.Services
             _mlContext.Model.Save(regressionModel, split.TrainSet.Schema, "bestRegressionModel.zip");
 
             // Träning av klassificering, uppgång/nedgång.
-            Console.WriteLine("\n Kör AutoML för klassificering...");
-            var binarySettings = new BinaryExperimentSettings { MaxExperimentTimeInSeconds = 60 };
-            var binaryExperiment = _mlContext.Auto().CreateBinaryClassificationExperiment(binarySettings);
-            var binaryResult = binaryExperiment.Execute(split.TrainSet, labelColumnName: "WillRise");
+            if (!shiftedData.Any(d => d.WillRise) || !shiftedData.Any(d => !d.WillRise))
+            {
+                Console.WriteLine("Kan inte träna klassificeringsmodellen. Datan innehåller endast uppgånger eller nedgånar.");
+            }
+            else
+            {
+                Console.WriteLine("\n Tränar binärklassificeringsmodell med FastTree...");
 
-            // Resultat av träningen.
-            var bestBinary = binaryResult.BestRun;
-            var binaryModel = bestBinary.Model;
-            var binaryPredictions = binaryModel.Transform(split.TestSet);
-            var binaryMetrics = _mlContext.BinaryClassification.Evaluate(binaryPredictions, labelColumnName: "WillRise");
+                // Kombinerar alla numeriska kolumner till en "Features"-kolumn.
+                var featurePipeline = _mlContext.Transforms.Concatenate("Features",
+                    new[] { "Open", "High", "Low", "Volume" })
+                    .Append(_mlContext.Transforms.NormalizeMinMax("Features"));
 
-            // Skriver ut resultat till konsol. Sparar modellen i zip-fil.
-            Console.WriteLine($"Bästa klassificeringsmodellen: {bestBinary.TrainerName}");
-            Console.WriteLine($"Noggranhet(Accuracy): {binaryMetrics.Accuracy:P2}");
-            _mlContext.Model.Save(binaryModel, split.TrainSet.Schema, "bestBinaryModel.zip");
+                // Skapa tränaren
+                var trainer = _mlContext.BinaryClassification.Trainers
+                    .FastTree(labelColumnName: "WillRise", featureColumnName: "Features");
 
-            Console.WriteLine("\n Modeller sparade:");
-            Console.WriteLine(" - bestRegressionModel.zip (Nästa dags stängning)");
-            Console.WriteLine(" - bestBinaryModel.zip (Uppgång/Nedgång)");
+                // Kombinera pipeline + tränare
+                var trainingPipeline = featurePipeline.Append(trainer);
+
+                // Träna modellen
+                var binaryModel = trainingPipeline.Fit(split.TrainSet);
+
+                
+                var binaryPredictions = binaryModel.Transform(split.TestSet);
+
+                var binaryMetrics = _mlContext.BinaryClassification.Evaluate(binaryPredictions, labelColumnName: "WillRise");
+
+                Console.WriteLine($"Noggrannhet: {binaryMetrics.Accuracy:P2}");
+
+                if (!double.IsNaN(binaryMetrics.AreaUnderRocCurve))
+                {
+                    Console.WriteLine($"AUC: {binaryMetrics.AreaUnderRocCurve}");
+                }
+                else
+                {
+                    Console.WriteLine("AUC kund inte beräknas. Saknar negativ klass i testdata");
+                }
+
+                _mlContext.Model.Save(binaryModel, split.TrainSet.Schema, "bestBinaryModel.zip");
+            }
+
+            // Console.WriteLine("\n Modeller sparade:");
+            // Console.WriteLine(" - bestRegressionModel.zip (Nästa dags stängning)");
+            // Console.WriteLine(" - bestBinaryModel.zip (Uppgång/Nedgång)");
 
         }   
     }
