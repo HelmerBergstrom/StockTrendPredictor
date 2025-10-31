@@ -44,30 +44,32 @@ var binaryPredictionEngine = mlContext.Model
     .CreatePredictionEngine<StockData, StockDirectionPrediction>(binaryModel);
 var predictedDirection = binaryPredictionEngine.Predict(latestData);
 
-string direction = predictedDirection.PredictedLabel ? "Upp" : "Ned";
+string direction = predictedDirection.PredictedLabel ? "📈 Upp" : "📉 Ned";
 
 // Gör om probability till heltal.
 var probabilityToInt = predictedDirection.Probability * 100;
 
-string upp = "";
+string upOrDown = "";
 
-Console.WriteLine("\n==========================================================\n");
-Console.WriteLine("\n R E G R E S S I O N S M O D E L L E N");
 
 // Är förutsägningen mer eller mindre än gårdagens stängning?
 if (predictedClose.PredictedClose > yesterdaysClose)
 {
     Console.ForegroundColor = ConsoleColor.Green;
-    upp = "UPPGÅNG";
+    upOrDown = "UPPGÅNG";
 }
 else
 {
     Console.ForegroundColor = ConsoleColor.Red;
-    upp = "NEDGÅNG"; 
+    upOrDown = "NEDGÅNG"; 
 }
 
+Console.WriteLine("\n==========================================================");
+Console.WriteLine("========   R E G R E S S I O N S M O D E L L E N   ========");
+Console.WriteLine("==========================================================\n");
+
 // Skriver ut förutsägelsen med ett heltal och 2 decimaler (F2).
-Console.WriteLine($"\n {upp} för aktien ({symbol}) till kursen: {predictedClose.PredictedClose:F2}");
+Console.WriteLine($"{upOrDown} för aktien ({symbol}) till kursen: {predictedClose.PredictedClose:F2}");
 
 if (probabilityToInt > 49)
 {
@@ -78,8 +80,9 @@ else
     Console.ForegroundColor = ConsoleColor.Red;
 }
 
-Console.WriteLine("\n==========================================================\n");
-Console.WriteLine("\n K L A S S I F I C E R I N G S M O D E L L E N");
+Console.WriteLine("\n=================================================================");
+Console.WriteLine("========   K L A S S I F I C E R I N G S M O D E L L E N   ========");
+Console.WriteLine("=================================================================\n");
 
 Console.WriteLine($"Förväntad rörelse imorgon: {direction}");
 Console.WriteLine($"Säkerhet: {probabilityToInt}%");
