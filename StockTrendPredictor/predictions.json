@@ -1,23 +1,9 @@
 [
   {
-    "Symbol": "NVDA",
-    "Date": "2025-10-31T16:49:35.506423+01:00",
-    "PredictedClose": 205.48877,
+    "Symbol": "MSFT",
+    "Date": "2025-10-31T17:55:44.56533+01:00",
+    "PredictedClose": 521.4638,
     "PredictedDirection": "Ned",
-    "Probability": 43.682186
-  },
-  {
-    "Symbol": "NVDA",
-    "Date": "2025-10-31T16:56:37.774325+01:00",
-    "PredictedClose": 205.48877,
-    "PredictedDirection": "Ned",
-    "Probability": 43.682186
-  },
-  {
-    "Symbol": "TSLA",
-    "Date": "2025-10-31T16:58:20.77085+01:00",
-    "PredictedClose": 435.40918,
-    "PredictedDirection": "Ned",
-    "Probability": 4.541066
+    "Probability": 0.3906351
   }
 ]

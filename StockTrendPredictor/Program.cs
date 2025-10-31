@@ -94,8 +94,9 @@ static async Task RunPrediction()
 
     string direction = predictedDirection.PredictedLabel ? "Upp" : "Ned";
 
-    // Gör om probability till heltal.
-    var probabilityToInt = predictedDirection.Probability * 10;
+    float confidence = predictedDirection.PredictedLabel ? predictedDirection.Probability : 1 - predictedDirection.Probability;
+
+    var probabilityToInt = predictedDirection.Probability;
 
     string upOrDown = "";
 
@@ -119,7 +120,7 @@ static async Task RunPrediction()
     // Skriver ut förutsägelsen med ett heltal och 2 decimaler (F2).
     Console.WriteLine($"{upOrDown} för aktien ({symbol}) till kursen: {predictedClose.PredictedClose:F2}");
 
-    if (probabilityToInt > 49)
+    if (direction == "Upp")
     {
         Console.ForegroundColor = ConsoleColor.Green;
     }
@@ -133,7 +134,7 @@ static async Task RunPrediction()
     Console.WriteLine("=================================================================\n");
 
     Console.WriteLine($"Förväntad rörelse imorgon: {direction}");
-    Console.WriteLine($"Säkerhet: {probabilityToInt}%");
+    Console.WriteLine($"Säkerhet: {confidence * 100:F1}%");
 
     var storage = new PredictionStorageService();
     var record = new PredictionRecord
@@ -170,10 +171,26 @@ static void ShowPredictionHistory()
         Console.WriteLine("             Tidigare förutsägelser           ");
         Console.WriteLine("==============================================\n");
 
+
         foreach (var p in predictions)
         {
+            if (p.PredictedDirection == "Upp")
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+            }
+
+            // Istället för att alltid visa säkerheten för positiv(uppgång), byts det till hur OSÄKER 
+            // modellen är för uppgång, när Direction är "Ned".
+            // Visar med andra ord alltid över 50% och hur säker den är på uppgång/nedgång.
+            // Gångrar confidence med 100 för att få 1-100%.
+            float confidence = p.PredictedDirection == "Upp" ? p.Probability : (1 - p.Probability);
+
             Console.WriteLine($"{p.Date:g} | {p.Symbol}");
-            Console.WriteLine($"Klassificering (uppgång/nedgång): {p.PredictedDirection} | Säkerhet: {p.Probability}%");
+            Console.WriteLine($"Klassificering (uppgång/nedgång): {p.PredictedDirection} | Säkerhet: {confidence * 100:F1}%");
             Console.WriteLine($"Regression (nästa dags stäningskurs): {p.PredictedClose}\n");
         }
     }
