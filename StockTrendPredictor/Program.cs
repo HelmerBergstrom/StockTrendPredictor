@@ -52,7 +52,7 @@ var probabilityToInt = predictedDirection.Probability * 100;
 string upOrDown = "";
 
 
-// Är förutsägningen mer eller mindre än gårdagens stängning?
+// Är förutsägelsen om stängningskursen mer eller mindre än gårdagens stängning?
 if (predictedClose.PredictedClose > yesterdaysClose)
 {
     Console.ForegroundColor = ConsoleColor.Green;
