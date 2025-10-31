@@ -3,7 +3,8 @@ using System.Text.Json.Serialization;
 using Microsoft.VisualBasic;
 
 //<summary>
-// Data från API:et ser ut som följande:
+// Nedan är exempel på hur data från företaget NVIDIA ser ut. 
+// Data från API:et kan se ut som följande:
 
 // {
 //     "Meta Data": {

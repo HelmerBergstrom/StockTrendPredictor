@@ -83,9 +83,7 @@ namespace StockTrendPredictor.Services
 
                 // Träna modellen
                 var binaryModel = trainingPipeline.Fit(split.TrainSet);
-
                 var binaryPredictions = binaryModel.Transform(split.TestSet);
-
                 var binaryMetrics = _mlContext.BinaryClassification.Evaluate(binaryPredictions, labelColumnName: "WillRise");
 
                 Console.WriteLine($"Noggrannhet: {binaryMetrics.Accuracy:P2}");
@@ -98,10 +96,10 @@ namespace StockTrendPredictor.Services
                 {
                     Console.WriteLine("AUC kund inte beräknas. Saknar negativ klass i testdata");
                 }
-
+                // Sparar modellen i zip-fil.
                 _mlContext.Model.Save(binaryModel, split.TrainSet.Schema, "bestBinaryModel.zip");
             }
-
+        
             Console.WriteLine("\n Modeller sparade:");
             Console.WriteLine(" - bestRegressionModel.zip (Nästa dags stängning)");
             Console.WriteLine(" - bestBinaryModel.zip (Uppgång/Nedgång)");

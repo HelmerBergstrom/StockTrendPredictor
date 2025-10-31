@@ -23,6 +23,7 @@ namespace StockTrendPredictor.Services
             // Om gränsen för API-förfrågningar på en dag är nådd, stannar det här.
             if (json.Contains("Please subscribe") || json.Contains("API rate limit is 25 requests per day"))
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Gränsen är nådd för API-förfrågningar idag. Försök igen imorgon.");
                 return new List<StockData>();
             }
@@ -58,7 +59,7 @@ namespace StockTrendPredictor.Services
                         Volume = float.Parse(d.Volume ?? "0"),
                     };
                 })
-                .OrderBy(d => d.Date) // sorterar utifrån datum, stigande bör det vara.
+                .OrderBy(d => d.Date) // sorterar utifrån datum.
                 .ToList(); // list = List<StockData>
 
             return list;
