@@ -30,5 +30,37 @@
     "PredictedDirection": "Ned",
     "Probability": 0.43134746,
     "PreviousClose": 517.81
+  },
+  {
+    "Symbol": "NVX",
+    "Date": "2025-11-01T14:57:27.416842+01:00",
+    "PredictedClose": 17.136028,
+    "PredictedDirection": "Upp",
+    "Probability": 0.6672849,
+    "PreviousClose": 1.51
+  },
+  {
+    "Symbol": "NVO",
+    "Date": "2025-11-01T14:57:47.778081+01:00",
+    "PredictedClose": 48.862064,
+    "PredictedDirection": "Upp",
+    "Probability": 0.6092777,
+    "PreviousClose": 49.46
+  },
+  {
+    "Symbol": "META",
+    "Date": "2025-11-01T14:58:18.993755+01:00",
+    "PredictedClose": 521.4638,
+    "PredictedDirection": "Ned",
+    "Probability": 0.4697753,
+    "PreviousClose": 648.35
+  },
+  {
+    "Symbol": "NEON",
+    "Date": "2025-11-01T15:00:41.091+01:00",
+    "PredictedClose": 17.136028,
+    "PredictedDirection": "Upp",
+    "Probability": 0.6672849,
+    "PreviousClose": 3.04
   }
 ]
