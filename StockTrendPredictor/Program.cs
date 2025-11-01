@@ -79,25 +79,27 @@ static async Task RunPrediction()
     var regressionModel = mlService.LoadRegressionModel();
     var binaryModel = mlService.LoadBinaryModel();
 
-    // Förutsägning av nästa dags stängningskurs (regressionsmodell).
-    var latestData = stockData.Last();
+    // REGRESSIONSMODELLEN
+    // Förutsägning av nästa dags stängningskurs.
+    var latestData = stockData.Last(); // Gårdagens data.
     var mlContext = new MLContext();
     var predictionEngine = mlContext.Model
         .CreatePredictionEngine<StockData, StockPrediction>(regressionModel);
     var predictedClose = predictionEngine.Predict(latestData);
-    var yesterdaysClose = latestData.Close;
+    var yesterdaysClose = latestData.Close; // Gårdagens stängning.
 
-    // Förutsägning av nästa dags upp/nedgång. Klassificeringsmodellen.
+    // KLASSIFICERINGSMODELLEN.
+    // Förutsägning av nästa dags upp/nedgång.
     var binaryPredictionEngine = mlContext.Model
         .CreatePredictionEngine<StockData, StockDirectionPrediction>(binaryModel);
     var predictedDirection = binaryPredictionEngine.Predict(latestData);
 
     string direction = predictedDirection.PredictedLabel ? "Upp" : "Ned";
 
+    // confidence visar alltid hur SÄKER modellen är på sitt beslut.
     float confidence = predictedDirection.PredictedLabel ? predictedDirection.Probability : 1 - predictedDirection.Probability;
 
-    var probabilityToInt = predictedDirection.Probability;
-
+    // skapar variabel för tom textsträng. Används i if-sats nedan.
     string upOrDown = "";
 
 
@@ -118,7 +120,7 @@ static async Task RunPrediction()
     Console.WriteLine("==========================================================\n");
 
     // Skriver ut förutsägelsen med ett heltal och 2 decimaler (F2).
-    Console.WriteLine($"{upOrDown} för aktien ({symbol}) till kursen: {predictedClose.PredictedClose:F2}");
+    Console.WriteLine($"Förväntad {upOrDown} för aktien ({symbol}) till kursen: {predictedClose.PredictedClose:F2}");
 
     if (direction == "Upp")
     {
@@ -136,6 +138,7 @@ static async Task RunPrediction()
     Console.WriteLine($"Förväntad rörelse imorgon: {direction}");
     Console.WriteLine($"Säkerhet: {confidence * 100:F1}%");
 
+    // Sparar i JSON-filen.
     var storage = new PredictionStorageService();
     var record = new PredictionRecord
     {
@@ -143,7 +146,8 @@ static async Task RunPrediction()
         Date = DateTime.Now,
         PredictedClose = predictedClose.PredictedClose,
         PredictedDirection = direction,
-        Probability = (float)probabilityToInt
+        Probability = predictedDirection.Probability,
+        PreviousClose = latestData.Close
     };
 
     storage.SavePrediction(record);
@@ -174,6 +178,15 @@ static void ShowPredictionHistory()
 
         foreach (var p in predictions)
         {
+            string regressionDirection = p.PredictedClose > p.PreviousClose ? "Upp" : "Ned";
+
+            // Visar hur SÄKER modellen är på sin förutsägelse. Kommer alltid vara över 50%.
+            float confidence = p.PredictedDirection == "Upp" ? p.Probability : (1 - p.Probability);
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine($"{p.Date:g} | {p.Symbol}");
+
+            // if-satser för att skriva ut i olika färger beroende på vad som förutsetts.
             if (p.PredictedDirection == "Upp")
             {
                 Console.ForegroundColor = ConsoleColor.Green;
@@ -183,25 +196,63 @@ static void ShowPredictionHistory()
                 Console.ForegroundColor = ConsoleColor.Red;
             }
 
-            // Istället för att alltid visa säkerheten för positiv(uppgång), byts det till hur OSÄKER 
-            // modellen är för uppgång, när Direction är "Ned".
-            // Visar med andra ord alltid över 50% och hur säker den är på uppgång/nedgång.
-            // Gångrar confidence med 100 för att få 1-100%.
-            float confidence = p.PredictedDirection == "Upp" ? p.Probability : (1 - p.Probability);
+            Console.WriteLine($"Klassificeringsmodellen förutspådde: {p.PredictedDirection} | Säkerhet: {confidence * 100:F1}%");
 
-            Console.WriteLine($"{p.Date:g} | {p.Symbol}");
-            Console.WriteLine($"Klassificering (uppgång/nedgång): {p.PredictedDirection} | Säkerhet: {confidence * 100:F1}%");
-            Console.WriteLine($"Regression (nästa dags stäningskurs): {p.PredictedClose}\n");
+            if (regressionDirection == "Upp")
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+            }
+
+            Console.WriteLine($"Regressionsmodellen förutspådde: {p.PredictedClose} ({regressionDirection})");
+            Console.WriteLine($"Föregående dags stängningskurs var: {p.PreviousClose}\n");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine($"===============================================================\n");
         }
     }
 
     Console.ResetColor();
-    Console.Write("\nTryck på valfri tangent för att återgå till menyn.");
+    Console.Write("\nTryck på valfri tangent för att återgå till menyn.\n");
     Console.ReadKey(intercept: true);
 }
 static void ShowPopularStocks()
 {
-    
+    // Skriver ut populära aktier och deras symboler.
+    var stocks = new Dictionary<string, string>
+    {
+        { "AAPL", "Apple" },
+        { "MSFT", "Microsoft" },
+        { "NVDA", "Nvidia" },
+        { "TSLA", "Tesla" },
+        { "AMZN", "Amazon.com" },
+        { "META", "Meta Platforms" },
+        { "ORCL", "Oracle" },
+        { "NFLX", "Netflix" },
+        { "PLTR", "Palantir Technologies" },
+        { "AMD", "Advanced Micro Devices" },
+        { "GOOG", "Alphabet" },
+        { "TSM", "Taiwan Semiconductor Manufacturing" },
+        { "IBM", "International Business Machines" }
+    };
+
+    Console.ForegroundColor = ConsoleColor.Cyan;
+    Console.WriteLine("=======================");
+    Console.WriteLine("=   Populära Aktier   =");
+    Console.WriteLine("=======================\n");
+
+    // Loopar igenom och skriver ut vardera aktie med Key(symbol) och Value(Bolag).
+    foreach (var stock in stocks)
+    {
+        Console.WriteLine($"{stock.Key} - {stock.Value}");
+    }
+
+    Console.ResetColor();
+    Console.WriteLine("\nTryck på valfri tangent för att återgå till menyn");
+    // intercept: true. Detta gör att det användaren skriver inte syns i konsolen.
+    Console.ReadKey(intercept: true);
 }
 
 

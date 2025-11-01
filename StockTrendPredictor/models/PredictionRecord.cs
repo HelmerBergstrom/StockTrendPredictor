@@ -7,5 +7,6 @@ namespace StockTrendPredictor.Models
         public float PredictedClose { get; set; }
         public string PredictedDirection { get; set; } = string.Empty;
         public float Probability { get; set; }
+        public float PreviousClose { get; set; }
     }
 }

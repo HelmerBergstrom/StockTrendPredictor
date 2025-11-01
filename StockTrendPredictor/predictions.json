@@ -1,9 +1,10 @@
 [
   {
-    "Symbol": "MSFT",
-    "Date": "2025-10-31T17:55:44.56533+01:00",
-    "PredictedClose": 521.4638,
+    "Symbol": "NVDA",
+    "Date": "2025-10-31T19:23:07.45361+01:00",
+    "PredictedClose": 205.48877,
     "PredictedDirection": "Ned",
-    "Probability": 0.3906351
+    "Probability": 0.43682188,
+    "PreviousClose": 202.89
   }
 ]
