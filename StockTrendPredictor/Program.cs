@@ -4,6 +4,12 @@ using Microsoft.ML;
 using StockTrendPredictor.Models;
 using StockTrendPredictor.Services;
 
+// Bortkommenterad kod för att träna modellerna. 
+
+// Console.WriteLine("\nTränar modeller (detta kan ta upp till en minut)...");
+// kod för att köra träning av modeller.
+// mlService.TrainAndEvaluate(stockData); 
+
 bool running = true;
 
 while (running)
@@ -255,7 +261,3 @@ static void ShowPopularStocks()
     Console.ReadKey(intercept: true);
 }
 
-
-// Console.WriteLine("\nTränar modeller (detta kan ta upp till en minut)...");
-// kod för att köra träning av modeller.
-// mlService.TrainAndEvaluate(stockData); 

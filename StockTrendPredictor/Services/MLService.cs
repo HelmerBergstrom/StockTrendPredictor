@@ -36,8 +36,9 @@ namespace StockTrendPredictor.Services
             }
 
             IDataView data = _mlContext.Data.LoadFromEnumerable(shiftedData);
-            var split = _mlContext.Data.TrainTestSplit(data, testFraction: 0.2);
+            var split = _mlContext.Data.TrainTestSplit(data, testFraction: 0.2); // 80 procents träning, 20 procent test.
 
+            // Skriver ut antal dagar i data som modellen tränas med, samt antar uppgångar och nedgångar.
             Console.WriteLine($"Antal dagar: {shiftedData.Count}");
             Console.WriteLine($"Uppgångar (WillRise = true): {shiftedData.Count(d => d.WillRise)}");
             Console.WriteLine($"Nedgångar (WillRise = false): {shiftedData.Count(d => !d.WillRise)}");
@@ -74,7 +75,7 @@ namespace StockTrendPredictor.Services
                     new[] { "Open", "High", "Low", "Volume", "DailyRange" })
                     .Append(_mlContext.Transforms.NormalizeMinMax("Features"));
 
-                // Skapa tränaren
+                // Skapa tränaren. Jag kör på en som heter FastTree.
                 var trainer = _mlContext.BinaryClassification.Trainers
                     .FastTree(labelColumnName: "WillRise", featureColumnName: "Features");
 
@@ -88,6 +89,7 @@ namespace StockTrendPredictor.Services
 
                 Console.WriteLine($"Noggrannhet: {binaryMetrics.Accuracy:P2}");
 
+                // Finns AUC som statistik i nummer, skrivs det ut. Annars inte. 
                 if (!double.IsNaN(binaryMetrics.AreaUnderRocCurve))
                 {
                     Console.WriteLine($"AUC: {binaryMetrics.AreaUnderRocCurve}");

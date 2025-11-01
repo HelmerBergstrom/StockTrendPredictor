@@ -32,6 +32,5 @@ namespace StockTrendPredictor.Models
         public bool PredictedLabel { get; set; }
 
         public float Probability { get; set; }
-        public float Score { get; set; }
     }
 }

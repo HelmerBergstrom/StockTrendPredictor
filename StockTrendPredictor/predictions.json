@@ -14,5 +14,21 @@
     "PredictedDirection": "Upp",
     "Probability": 0.6118511,
     "PreviousClose": 270.37
+  },
+  {
+    "Symbol": "NVDA",
+    "Date": "2025-11-01T14:48:26.260944+01:00",
+    "PredictedClose": 205.48877,
+    "PredictedDirection": "Ned",
+    "Probability": 0.43682188,
+    "PreviousClose": 202.49
+  },
+  {
+    "Symbol": "MSFT",
+    "Date": "2025-11-01T14:50:05.809865+01:00",
+    "PredictedClose": 521.4638,
+    "PredictedDirection": "Ned",
+    "Probability": 0.43134746,
+    "PreviousClose": 517.81
   }
 ]
