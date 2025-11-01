@@ -156,7 +156,7 @@ static async Task RunPrediction()
     Console.WriteLine("\nFörutsägelsen sparades i predictions.json");
     Console.ResetColor();
     Console.WriteLine("\nTryck på en valfri tangent för att återgå till menyn.");
-    Console.ReadKey();
+    Console.ReadKey(intercept: true);
 }
 static void ShowPredictionHistory()
 {
@@ -185,6 +185,7 @@ static void ShowPredictionHistory()
 
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"{p.Date:g} | {p.Symbol}");
+            Console.WriteLine($"Föregående dags stängningskurs: {p.PreviousClose}");
 
             // if-satser för att skriva ut i olika färger beroende på vad som förutsetts.
             if (p.PredictedDirection == "Upp")
@@ -196,7 +197,7 @@ static void ShowPredictionHistory()
                 Console.ForegroundColor = ConsoleColor.Red;
             }
 
-            Console.WriteLine($"Klassificeringsmodellen förutspådde: {p.PredictedDirection} | Säkerhet: {confidence * 100:F1}%");
+            Console.WriteLine($"\nKlassificeringsmodellen förutspådde: {p.PredictedDirection} | Säkerhet: {confidence * 100:F1}%");
 
             if (regressionDirection == "Upp")
             {
@@ -207,8 +208,7 @@ static void ShowPredictionHistory()
                 Console.ForegroundColor = ConsoleColor.Red;
             }
 
-            Console.WriteLine($"Regressionsmodellen förutspådde: {p.PredictedClose} ({regressionDirection})");
-            Console.WriteLine($"Föregående dags stängningskurs var: {p.PreviousClose}\n");
+            Console.WriteLine($"\nRegressionsmodellen förutspådde stängningskursen: {p.PredictedClose} ({regressionDirection})\n");
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"===============================================================\n");
         }
