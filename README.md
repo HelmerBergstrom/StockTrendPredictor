@@ -12,3 +12,18 @@ Projektet demonstrerar hur ML.NET och AutoML kan användas för regression och b
 - Sparar modellernas förutsägelser i en **JSON-fil**.  
 - Visar tidigare förutsägelser och en lista med populära aktier.  
 - Enkel och användarvänlig konsolmeny för navigation.
+
+## Installation och användning
+
+### Klona repot
+Först behöver du klona repot till din dator:
+
+```bash
+git clone https://github.com/HelmerBergstrom/StockTrendPredictor
+````
+
+För att köra applikationen skriver du kommandot nedan i terminalen, när du står i mappen:
+```bash
+dotnet run
+````
+
