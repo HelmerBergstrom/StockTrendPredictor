@@ -485,3 +485,5 @@ $RECYCLE.BIN/
 
 # Json-file database
 predictions.json
+# Lokal konfiguration med API-nyckel
+appsettings.json

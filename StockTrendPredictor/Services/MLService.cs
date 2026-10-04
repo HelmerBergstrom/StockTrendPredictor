@@ -48,7 +48,10 @@ namespace StockTrendPredictor.Services
             Console.WriteLine("Kör AutoML för regression...");
             var regressionSettings = new RegressionExperimentSettings { MaxExperimentTimeInSeconds = 30 };
             var regressionExperiment = _mlContext.Auto().CreateRegressionExperiment(regressionSettings);
-            var regressionResult = regressionExperiment.Execute(split.TrainSet, labelColumnName: "Close");
+            // WillRise bygger på nästa dags stängning och är inte känd vid förutsägelsen, så den får inte användas som feature.
+            var columnInformation = new ColumnInformation { LabelColumnName = "Close" };
+            columnInformation.IgnoredColumnNames.Add("WillRise");
+            var regressionResult = regressionExperiment.Execute(split.TrainSet, columnInformation);
 
             // Resultat av träningen.
             var bestRegression = regressionResult.BestRun;

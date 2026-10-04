@@ -68,7 +68,8 @@ static async Task RunPrediction()
     if (string.IsNullOrEmpty(symbol))
     {
         Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("Ingen symbol angiven. Avslutar.");
+        Console.WriteLine("Ingen symbol angiven.");
+        WaitForKey();
         return;
     }
 
@@ -77,6 +78,8 @@ static async Task RunPrediction()
 
     if (stockData.Count == 0)
     {
+        // Felmeddelandet skrivs ut i StockApiService. Väntar så att det hinner läsas innan menyn visas igen.
+        WaitForKey();
         return;
     }
 
@@ -160,6 +163,12 @@ static async Task RunPrediction()
 
     Console.ForegroundColor = ConsoleColor.Yellow;
     Console.WriteLine("\nFörutsägelsen sparades i predictions.json");
+    Console.ResetColor();
+    Console.WriteLine("\nTryck på en valfri tangent för att återgå till menyn.");
+    Console.ReadKey(intercept: true);
+}
+static void WaitForKey()
+{
     Console.ResetColor();
     Console.WriteLine("\nTryck på en valfri tangent för att återgå till menyn.");
     Console.ReadKey(intercept: true);
